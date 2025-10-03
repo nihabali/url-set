@@ -1,236 +1,287 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repository Browser</title>
+    <title>URL Hub - আপনার সব লিংক এক জায়গায়</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f6f8fa;
-            --bg-tertiary: #ffffff;
-            --text-primary: #24292e;
-            --text-secondary: #586069;
-            --text-tertiary: #6a737d;
-            --border-color: #e1e4e8;
-            --accent-color: #0366d6;
-            --hover-bg: #f6f8fa;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-            --folder-icon: #79b8ff;
-            --file-icon: #f1e05a;
-            --edit-bg: #0366d6;
-            --edit-text: #ffffff;
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --success: #3fb950;
+            --warning: #d29922;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: var(--font-family);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.6;
+            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 16px;
         }
 
         header {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
-            margin-bottom: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--accent);
         }
 
-        .breadcrumb {
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
             display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
-            font-size: 14px;
-            margin-bottom: 16px;
         }
 
-        .breadcrumb-item {
-            display: flex;
-            align-items: center;
+        .stat-card {
+            background-color: var(--bg-secondary);
+            padding: 15px 25px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            text-align: center;
+            min-width: 150px;
         }
 
-        .breadcrumb-item:not(:last-child)::after {
-            content: "/";
-            margin: 0 5px;
-            color: var(--text-tertiary);
+        .stat-card h3 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 5px;
         }
 
-        .breadcrumb-item a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .breadcrumb-item a:hover {
-            text-decoration: underline;
+        .stat-card p {
+            color: var(--text-secondary);
         }
 
         .content {
-            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .case-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
             border-radius: 6px;
-            overflow: hidden;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .file-list {
-            list-style: none;
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .file-item {
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .case-title {
+            font-size: 1.3rem;
+            color: var(--accent);
             display: flex;
             align-items: center;
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
+            gap: 10px;
+        }
+
+        .case-title i {
+            font-size: 1rem;
+        }
+
+        .set-count {
+            background-color: var(--bg-tertiary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .sets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .set-item {
+            background-color: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
             transition: background-color 0.2s;
         }
 
-        .file-item:last-child {
-            border-bottom: none;
+        .set-item:hover {
+            background-color: rgba(88, 166, 255, 0.1);
         }
 
-        .file-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .file-icon {
-            margin-right: 8px;
-            font-size: 16px;
-        }
-
-        .folder-icon {
-            color: var(--folder-icon);
-        }
-
-        .file-name {
-            flex: 1;
-            font-family: var(--font-mono);
-            font-size: 14px;
-        }
-
-        .file-actions {
+        .set-header {
             display: flex;
-            opacity: 0;
-            transition: opacity 0.2s;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
-        .file-item:hover .file-actions {
-            opacity: 1;
+        .set-name {
+            font-weight: bold;
+            color: var(--text-primary);
         }
 
-        .action-btn {
-            background: none;
-            border: none;
+        .set-links-count {
+            background-color: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            cursor: pointer;
-            margin-left: 8px;
-            padding: 4px;
-            font-size: 14px;
         }
 
-        .action-btn:hover {
-            color: var(--accent-color);
+        .set-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .edit-input {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            border: 1px solid var(--accent-color);
-            border-radius: 3px;
-            padding: 4px 8px;
-            width: 100%;
-        }
-
-        .file-viewer {
-            padding: 16px;
-            background-color: var(--bg-tertiary);
-            border-radius: 6px;
-            margin-top: 16px;
-            overflow: auto;
-        }
-
-        .file-content {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .empty-state {
-            padding: 32px;
-            text-align: center;
+        .link-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--bg-primary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
             color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s, background-color 0.2s;
+        }
+
+        .link-item:hover {
+            color: var(--accent);
+            background-color: rgba(88, 166, 255, 0.1);
+        }
+
+        .link-item i {
+            font-size: 0.8rem;
         }
 
         .loading {
-            display: flex;
-            justify-content: center;
-            padding: 32px;
+            text-align: center;
+            padding: 50px 0;
+            color: var(--text-secondary);
         }
 
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            animation: spin 2s infinite linear;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .toast {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px 16px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: transform 0.3s, opacity 0.3s;
-            z-index: 1000;
+        .error {
+            text-align: center;
+            padding: 50px 0;
+            color: var(--warning);
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
+        .error i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px 0;
+            color: var(--text-secondary);
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 8px;
+            header h1 {
+                font-size: 2rem;
             }
-
-            h1 {
-                font-size: 20px;
+            
+            .content {
+                grid-template-columns: 1fr;
             }
-
-            .file-item {
-                padding: 8px 12px;
+            
+            .stats {
+                gap: 15px;
             }
-
-            .file-actions {
-                opacity: 1;
+            
+            .stat-card {
+                min-width: 120px;
+                padding: 10px 15px;
             }
         }
     </style>
@@ -238,321 +289,236 @@
 <body>
     <div class="container">
         <header>
-            <h1>Repository Browser</h1>
+            <h1><i class="fas fa-link"></i> URL Hub</h1>
+            <p>আপনার সব URL এক জায়গায়</p>
         </header>
 
-        <div class="breadcrumb" id="breadcrumb">
-            <div class="breadcrumb-item">
-                <a href="#" data-path="">root</a>
+        <div class="search-container">
+            <input type="text" class="search-box" id="searchBox" placeholder="কেস বা সেট খুঁজুন...">
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="totalCases">0</h3>
+                <p>মোট কেস</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalSets">0</h3>
+                <p>মোট সেট</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalLinks">0</h3>
+                <p>মোট লিংক</p>
             </div>
         </div>
 
-        <div class="content">
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-            </div>
-            <ul id="file-list" class="file-list" style="display: none;"></ul>
-            <div id="empty-state" class="empty-state" style="display: none;">
-                This directory is empty.
-            </div>
-            <div id="file-viewer" class="file-viewer" style="display: none;">
-                <div class="file-content" id="file-content"></div>
+        <div id="content" class="content">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>ডেটা লোড হচ্ছে...</p>
             </div>
         </div>
+
+        <footer>
+            <p>&copy; 2023 URL Hub - GitHub থেকে স্বয়ংক্রিয়ভাবে ডেটা সংগ্রহ করা হচ্ছে</p>
+        </footer>
     </div>
 
-    <div id="toast" class="toast"></div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const fileList = document.getElementById('file-list');
-            const loading = document.getElementById('loading');
-            const emptyState = document.getElementById('empty-state');
-            const fileViewer = document.getElementById('file-viewer');
-            const fileContent = document.getElementById('file-content');
-            const breadcrumb = document.getElementById('breadcrumb');
-            const toast = document.getElementById('toast');
-
-            let currentPath = '';
-            let repositoryStructure = {};
-
-            // Initialize the app
-            init();
-
-            async function init() {
+        document.addEventListener('DOMContentLoaded', function() {
+            // রিপোজিটরির তথ্য - এটি স্বয়ংক্রিয়ভাবে সংগ্রহ করা হবে
+            const repoOwner = window.location.hostname.split('.')[0];
+            const repoName = window.location.pathname.split('/')[1] || 'url-hub';
+            
+            // GitHub API থেকে ডেটা লোড করার ফাংশন
+            async function loadRepoData() {
                 try {
-                    // In a real implementation, you would fetch the repository structure from an API
-                    // For this demo, we'll simulate it with a function that generates the structure
-                    repositoryStructure = await fetchRepositoryStructure();
-                    renderDirectory(currentPath);
+                    // প্রথমে রিপোজিটরির কন্টেন্ট লোড করুন
+                    const repoResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`);
+                    
+                    if (!repoResponse.ok) {
+                        throw new Error('রিপোজিটরি ডেটা লোড করতে ব্যর্থ হয়েছে');
+                    }
+                    
+                    const repoData = await repoResponse.json();
+                    
+                    // কেস ফোল্ডারগুলি খুঁজুন
+                    const caseFolders = repoData.filter(item => 
+                        item.type === 'dir' && item.name.startsWith('case')
+                    );
+                    
+                    if (caseFolders.length === 0) {
+                        displayError('কোন কেস ফোল্ডার পাওয়া যায়নি');
+                        return;
+                    }
+                    
+                    // প্রতিটি কেস ফোল্ডার থেকে সেট ফাইলগুলি লোড করুন
+                    const allCases = await Promise.all(
+                        caseFolders.map(async (caseFolder) => {
+                            const caseResponse = await fetch(caseFolder.url);
+                            const caseData = await caseResponse.json();
+                            
+                            // সেট ফাইলগুলি খুঁজুন
+                            const setFiles = caseData.filter(item => 
+                                item.type === 'file' && item.name.endsWith('.html')
+                            );
+                            
+                            // প্রতিটি সেট ফাইল থেকে লিংকগুলি এক্সট্র্যাক্ট করুন
+                            const sets = await Promise.all(
+                                setFiles.map(async (setFile) => {
+                                    const fileResponse = await fetch(setFile.download_url);
+                                    const fileContent = await fileResponse.text();
+                                    
+                                    // HTML থেকে লিংকগুলি এক্সট্র্যাক্ট করুন
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = fileContent;
+                                    
+                                    const links = Array.from(tempDiv.querySelectorAll('a')).map(a => ({
+                                        url: a.href,
+                                        title: a.textContent || a.href
+                                    }));
+                                    
+                                    return {
+                                        name: setFile.name.replace('.html', ''),
+                                        links: links
+                                    };
+                                })
+                            );
+                            
+                            return {
+                                name: caseFolder.name,
+                                sets: sets
+                            };
+                        })
+                    );
+                    
+                    // ডেটা প্রদর্শন করুন
+                    displayData(allCases);
+                    updateStats(allCases);
+                    
                 } catch (error) {
-                    showToast('Error loading repository: ' + error.message, 'error');
+                    console.error('Error loading repo data:', error);
+                    displayError('ডেটা লোড করতে সমস্যা হয়েছে: ' + error.message);
                 }
             }
-
-            // Simulate fetching repository structure
-            async function fetchRepositoryStructure() {
-                // This is a mock function that simulates fetching the repository structure
-                // In a real implementation, you would use Vercel's API or GitHub API
+            
+            // ডেটা প্রদর্শনের ফাংশন
+            function displayData(cases) {
+                const contentElement = document.getElementById('content');
                 
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Generate a mock structure based on the description
-                const structure = {
-                    'case1': {},
-                    'case2': {},
-                    'case3': {},
-                    'index.html': { type: 'file', content: 'This is the index.html file' },
-                    'README.md': { type: 'file', content: '# Repository\n\nThis is a repository with multiple cases.' }
-                };
-                
-                // Add files to each case folder
-                for (let i = 1; i <= 3; i++) {
-                    const caseKey = `case${i}`;
-                    structure[caseKey] = {};
-                    
-                    for (let j = 1; j <= 10; j++) {
-                        const fileKey = `set-${j}.html`;
-                        structure[caseKey][fileKey] = {
-                            type: 'file',
-                            content: `<html>\n<head>\n<title>Set ${j}</title>\n</head>\n<body>\n<h1>Set ${j} in Case ${i}</h1>\n<p>This file contains URLs:</p>\n<ul>\n<li><a href="https://example1.com">Example 1</a></li>\n<li><a href="https://example2.com">Example 2</a></li>\n<li><a href="https://example3.com">Example 3</a></li>\n</ul>\n</body>\n</html>`
-                        };
-                    }
+                if (cases.length === 0) {
+                    contentElement.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-folder-open"></i>
+                            <p>কোন ডেটা পাওয়া যায়নি</p>
+                        </div>
+                    `;
+                    return;
                 }
                 
-                return structure;
+                contentElement.innerHTML = cases.map(caseItem => `
+                    <div class="case-card" data-case="${caseItem.name}">
+                        <div class="case-header">
+                            <h2 class="case-title">
+                                <i class="fas fa-folder"></i>
+                                ${caseItem.name}
+                            </h2>
+                            <span class="set-count">${caseItem.sets.length} সেট</span>
+                        </div>
+                        <div class="sets-container">
+                            ${caseItem.sets.map(set => `
+                                <div class="set-item" data-set="${set.name}">
+                                    <div class="set-header">
+                                        <span class="set-name">${set.name}</span>
+                                        <span class="set-links-count">${set.links.length} লিংক</span>
+                                    </div>
+                                    <div class="set-links">
+                                        ${set.links.map(link => `
+                                            <a href="${link.url}" target="_blank" class="link-item">
+                                                <i class="fas fa-external-link-alt"></i>
+                                                ${link.title}
+                                            </a>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
             }
-
-            function renderDirectory(path) {
-                loading.style.display = 'flex';
-                fileList.style.display = 'none';
-                emptyState.style.display = 'none';
-                fileViewer.style.display = 'none';
-
-                // Update breadcrumb
-                updateBreadcrumb(path);
-
-                // Get the current directory
-                let currentDir = repositoryStructure;
-                if (path) {
-                    const pathParts = path.split('/').filter(part => part);
-                    pathParts.forEach(part => {
-                        if (currentDir[part]) {
-                            currentDir = currentDir[part];
-                        }
+            
+            // স্ট্যাটিস্টিক্স আপডেট করার ফাংশন
+            function updateStats(cases) {
+                let totalSets = 0;
+                let totalLinks = 0;
+                
+                cases.forEach(caseItem => {
+                    totalSets += caseItem.sets.length;
+                    caseItem.sets.forEach(set => {
+                        totalLinks += set.links.length;
                     });
-                }
-
-                // Render the directory
-                setTimeout(() => {
-                    loading.style.display = 'none';
+                });
+                
+                document.getElementById('totalCases').textContent = cases.length;
+                document.getElementById('totalSets').textContent = totalSets;
+                document.getElementById('totalLinks').textContent = totalLinks;
+            }
+            
+            // ত্রুটি প্রদর্শনের ফাংশন
+            function displayError(message) {
+                const contentElement = document.getElementById('content');
+                contentElement.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+            
+            // সার্চ ফাংশনালিটি
+            const searchBox = document.getElementById('searchBox');
+            searchBox.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const caseCards = document.querySelectorAll('.case-card');
+                
+                caseCards.forEach(card => {
+                    const caseName = card.getAttribute('data-case').toLowerCase();
+                    const setItems = card.querySelectorAll('.set-item');
+                    let hasVisibleSet = false;
                     
-                    const items = Object.keys(currentDir).sort((a, b) => {
-                        // Folders first, then files
-                        const aIsFile = currentDir[a].type === 'file';
-                        const bIsFile = currentDir[b].type === 'file';
+                    setItems.forEach(setItem => {
+                        const setName = setItem.getAttribute('data-set').toLowerCase();
+                        const linkItems = setItem.querySelectorAll('.link-item');
+                        let hasVisibleLink = false;
                         
-                        if (aIsFile && !bIsFile) return 1;
-                        if (!aIsFile && bIsFile) return -1;
-                        
-                        return a.localeCompare(b);
-                    });
-
-                    if (items.length === 0) {
-                        emptyState.style.display = 'block';
-                        return;
-                    }
-
-                    fileList.innerHTML = '';
-                    fileList.style.display = 'block';
-
-                    items.forEach(item => {
-                        const isFile = currentDir[item].type === 'file';
-                        const li = document.createElement('li');
-                        li.className = 'file-item';
-                        
-                        const icon = document.createElement('span');
-                        icon.className = `file-icon ${isFile ? '' : 'folder-icon'}`;
-                        icon.textContent = isFile ? '📄' : '📁';
-                        
-                        const name = document.createElement('div');
-                        name.className = 'file-name';
-                        name.textContent = item;
-                        
-                        const actions = document.createElement('div');
-                        actions.className = 'file-actions';
-                        
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'action-btn';
-                        editBtn.textContent = '✏️';
-                        editBtn.title = 'Rename';
-                        editBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            startRename(item, path, isFile);
-                        });
-                        
-                        actions.appendChild(editBtn);
-                        
-                        li.appendChild(icon);
-                        li.appendChild(name);
-                        li.appendChild(actions);
-                        
-                        li.addEventListener('click', () => {
-                            if (isFile) {
-                                viewFile(path, item);
+                        linkItems.forEach(linkItem => {
+                            const linkText = linkItem.textContent.toLowerCase();
+                            if (linkText.includes(searchTerm) || setName.includes(searchTerm) || caseName.includes(searchTerm)) {
+                                linkItem.style.display = 'inline-flex';
+                                hasVisibleLink = true;
                             } else {
-                                navigateToDirectory(path ? `${path}/${item}` : item);
+                                linkItem.style.display = 'none';
                             }
                         });
                         
-                        fileList.appendChild(li);
-                    });
-                }, 300);
-            }
-
-            function viewFile(dirPath, fileName) {
-                loading.style.display = 'flex';
-                fileList.style.display = 'none';
-                emptyState.style.display = 'none';
-                fileViewer.style.display = 'none';
-
-                // Get the file content
-                let currentDir = repositoryStructure;
-                if (dirPath) {
-                    const pathParts = dirPath.split('/').filter(part => part);
-                    pathParts.forEach(part => {
-                        if (currentDir[part]) {
-                            currentDir = currentDir[part];
+                        if (hasVisibleLink || setName.includes(searchTerm) || caseName.includes(searchTerm)) {
+                            setItem.style.display = 'block';
+                            hasVisibleSet = true;
+                        } else {
+                            setItem.style.display = 'none';
                         }
                     });
-                }
-
-                setTimeout(() => {
-                    loading.style.display = 'none';
-                    fileContent.textContent = currentDir[fileName].content;
-                    fileViewer.style.display = 'block';
-                }, 300);
-            }
-
-            function navigateToDirectory(path) {
-                currentPath = path;
-                renderDirectory(path);
-            }
-
-            function updateBreadcrumb(path) {
-                breadcrumb.innerHTML = '';
-                
-                // Add root
-                const rootItem = document.createElement('div');
-                rootItem.className = 'breadcrumb-item';
-                const rootLink = document.createElement('a');
-                rootLink.href = '#';
-                rootLink.textContent = 'root';
-                rootLink.dataset.path = '';
-                rootLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navigateToDirectory('');
-                });
-                rootItem.appendChild(rootLink);
-                breadcrumb.appendChild(rootItem);
-                
-                // Add path parts
-                if (path) {
-                    const pathParts = path.split('/').filter(part => part);
-                    let currentPath = '';
                     
-                    pathParts.forEach(part => {
-                        currentPath = currentPath ? `${currentPath}/${part}` : part;
-                        
-                        const item = document.createElement('div');
-                        item.className = 'breadcrumb-item';
-                        
-                        const link = document.createElement('a');
-                        link.href = '#';
-                        link.textContent = part;
-                        link.dataset.path = currentPath;
-                        link.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            navigateToDirectory(currentPath);
-                        });
-                        
-                        item.appendChild(link);
-                        breadcrumb.appendChild(item);
-                    });
-                }
-            }
-
-            function startRename(oldName, dirPath, isFile) {
-                const fileItems = Array.from(fileList.querySelectorAll('.file-item'));
-                const targetItem = fileItems.find(item => 
-                    item.querySelector('.file-name').textContent === oldName
-                );
-                
-                if (!targetItem) return;
-                
-                const nameElement = targetItem.querySelector('.file-name');
-                const originalName = nameElement.textContent;
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'edit-input';
-                input.value = originalName;
-                
-                nameElement.innerHTML = '';
-                nameElement.appendChild(input);
-                input.focus();
-                input.select();
-                
-                const saveRename = () => {
-                    const newName = input.value.trim();
-                    if (!newName || newName === originalName) {
-                        nameElement.textContent = originalName;
-                        return;
-                    }
-                    
-                    // Update the repository structure
-                    let currentDir = repositoryStructure;
-                    if (dirPath) {
-                        const pathParts = dirPath.split('/').filter(part => part);
-                        pathParts.forEach(part => {
-                            if (currentDir[part]) {
-                                currentDir = currentDir[part];
-                            }
-                        });
-                    }
-                    
-                    if (currentDir[originalName]) {
-                        currentDir[newName] = currentDir[originalName];
-                        delete currentDir[originalName];
-                        
-                        nameElement.textContent = newName;
-                        showToast(`Renamed "${originalName}" to "${newName}"`);
-                        
-                        // Re-render the directory to update the order
-                        renderDirectory(dirPath);
-                    }
-                };
-                
-                input.addEventListener('blur', saveRename);
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        saveRename();
-                    } else if (e.key === 'Escape') {
-                        nameElement.textContent = originalName;
+                    if (hasVisibleSet || caseName.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
                     }
                 });
-            }
-
-            function showToast(message, type = 'info') {
-                toast.textContent = message;
-                toast.className = 'toast show';
-                
-                setTimeout(() => {
-                    toast.className = 'toast';
-                }, 3000);
-            }
+            });
+            
+            // ডেটা লোড করুন
+            loadRepoData();
         });
     </script>
 </body>
