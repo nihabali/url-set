@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Download Links</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --primary-dark: #1976D2;
+            --secondary-color: #4CAF50;
+            --background-color: #121212;
+            --surface-color: #1E1E1E;
+            --error-color: #CF6679;
+            --on-primary: #FFFFFF;
+            --on-secondary: #000000;
+            --on-background: #FFFFFF;
+            --on-surface: #FFFFFF;
+            --text-primary: rgba(255, 255, 255, 0.87);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --divider-color: rgba(255, 255, 255, 0.12);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--on-primary);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo .material-icons {
+            margin-right: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .movie-container {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .movie-header {
+            background-color: var(--primary-dark);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .movie-header .material-icons {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+
+        .movie-title {
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .movie-description {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .download-links {
+            padding: 1.5rem;
+        }
+
+        .download-links h3 {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .link-item:last-child {
+            border-bottom: none;
+        }
+
+        .link-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .link-info .material-icons {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .link-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .link-source {
+            font-weight: 500;
+        }
+
+        .link-quality {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .link-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .link-actions a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+
+        .link-actions a .material-icons {
+            margin-left: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #323232;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .movie-title {
+                font-size: 1.5rem;
+            }
+
+            .link-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .link-actions {
+                margin-top: 0.5rem;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons">movie</span>
+                    <span>OTHER'S OTT</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-title">
+                <!-- Add your movie title here -->
+                <h1>Spider-Man: No Way Home</h1>
+                <p>Download links for Spider-Man: No Way Home (2021)</p>
+            </div>
+
+            <div class="movie-container">
+                <div class="movie-header">
+                    <span class="material-icons">movie</span>
+                    <div>
+                        <div class="movie-title">Spider-Man: No Way Home</div>
+                        <div class="movie-description">2021 • PG-13 • 148 min • Action, Adventure, Fantasy</div>
+                    </div>
+                </div>
+
+                <div class="download-links">
+                    <h3>Download Links</h3>
+                    
+                    <!-- Download Link 1 -->
+                    <div class="link-item">
+                        <div class="link-info">
+                            <span class="material-icons">cloud_download</span>
+                            <div class="link-details">
+                                <div class="link-source">Google Drive</div>
+                                <div class="link-quality">1080p • 2.5GB</div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a href="https://example.com/spiderman-1080p-gdrive" target="_blank">
+                                Download
+                                <span class="material-icons">arrow_forward</span>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('https://example.com/spiderman-1080p-gdrive')">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Download Link 2 -->
+                    <div class="link-item">
+                        <div class="link-info">
+                            <span class="material-icons">cloud_download</span>
+                            <div class="link-details">
+                                <div class="link-source">Mega.nz</div>
+                                <div class="link-quality">1080p • 2.3GB</div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a href="https://example.com/spiderman-1080p-mega" target="_blank">
+                                Download
+                                <span class="material-icons">arrow_forward</span>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('https://example.com/spiderman-1080p-mega')">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Download Link 3 -->
+                    <div class="link-item">
+                        <div class="link-info">
+                            <span class="material-icons">cloud_download</span>
+                            <div class="link-details">
+                                <div class="link-source">MediaFire</div>
+                                <div class="link-quality">720p • 1.5GB</div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a href="https://example.com/spiderman-720p-mediafire" target="_blank">
+                                Download
+                                <span class="material-icons">arrow_forward</span>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('https://example.com/spiderman-720p-mediafire')">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Download Link 4 -->
+                    <div class="link-item">
+                        <div class="link-info">
+                            <span class="material-icons">cloud_download</span>
+                            <div class="link-details">
+                                <div class="link-source">Direct Link</div>
+                                <div class="link-quality">480p • 800MB</div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a href="https://example.com/spiderman-480p-direct" target="_blank">
+                                Download
+                                <span class="material-icons">arrow_forward</span>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('https://example.com/spiderman-480p-direct')">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add more download links as needed -->
+                    <!-- Use the template below to add more links -->
+                    <!--
+                    <div class="link-item">
+                        <div class="link-info">
+                            <span class="material-icons">cloud_download</span>
+                            <div class="link-details">
+                                <div class="link-source">Source Name</div>
+                                <div class="link-quality">Quality • Size</div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a href="YOUR_DOWNLOAD_LINK" target="_blank">
+                                Download
+                                <span class="material-icons">arrow_forward</span>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('YOUR_DOWNLOAD_LINK')">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast">Link copied to clipboard!</div>
+
+    <script>
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show toast notification
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            // Hide toast notification after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
