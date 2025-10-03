@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Repository File Explorer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 8px 0;
+    }
+    a {
+      text-decoration: none;
+      color: #0070f3;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Repository Browser</h1>
+  <ul id="file-list"></ul>
+
+  <script>
+    const repoOwner = "YOUR_GITHUB_USERNAME";   // আপনার GitHub username দিন
+    const repoName  = "YOUR_REPO_NAME";        // আপনার repository নাম দিন
+    const branch    = "main";                  // branch (main বা master)
+
+    async function fetchRepoContents(path = "") {
+      const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        document.getElementById("file-list").innerHTML = "<li>❌ Error loading files</li>";
+        return;
+      }
+      const data = await res.json();
+      renderList(data, path);
+    }
+
+    function renderList(items, currentPath) {
+      const list = document.getElementById("file-list");
+      list.innerHTML = "";
+
+      // Go back link if inside folder
+      if (currentPath) {
+        const parts = currentPath.split("/").filter(Boolean);
+        const upPath = parts.slice(0, -1).join("/");
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="?path=${upPath}">⬅️ Back</a>`;
+        list.appendChild(li);
+      }
+
+      items.forEach(item => {
+        const li = document.createElement("li");
+        if (item.type === "dir") {
+          li.innerHTML = `📁 <a href="?path=${item.path}">${item.name}/</a>`;
+        } else {
+          li.innerHTML = `📄 <a href="https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${item.path}" target="_blank">${item.name}</a>`;
+        }
+        list.appendChild(li);
+      });
+    }
+
+    // Handle ?path= query for navigation
+    const urlParams = new URLSearchParams(window.location.search);
+    const path = urlParams.get("path") || "";
+    fetchRepoContents(path);
+  </script>
+</body>
+</html>
