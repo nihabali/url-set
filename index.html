@@ -1,82 +1,459 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>Repository File Explorer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      margin: 8px 0;
-    }
-    a {
-      text-decoration: none;
-      color: #0070f3;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Hosting Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark-color);
+            padding-bottom: 2rem;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 2rem 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 1rem 1rem 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .folder-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+        
+        .file-icon {
+            color: var(--accent-color);
+            margin-right: 0.5rem;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--primary-color);
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-box input {
+            border-radius: 2rem;
+            padding-left: 2.5rem;
+            border: 1px solid #ddd;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats-card h3 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
-  <h1>Repository Browser</h1>
-  <ul id="file-list"></ul>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-link me-2"></i>URL Hosting Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-info-circle me-1"></i> সম্পর্কে</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope me-1"></i> যোগাযোগ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-  <script>
-    const repoOwner = "YOUR_GITHUB_USERNAME";   // আপনার GitHub username দিন
-    const repoName  = "YOUR_REPO_NAME";        // আপনার repository নাম দিন
-    const branch    = "main";                  // branch (main বা master)
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">URL হোস্টিং হাব</h1>
+            <p class="lead">এক জায়গায় সব URL গুলো এক্সেস করুন</p>
+        </div>
+    </section>
 
-    async function fetchRepoContents(path = "") {
-      const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        document.getElementById("file-list").innerHTML = "<li>❌ Error loading files</li>";
-        return;
-      }
-      const data = await res.json();
-      renderList(data, path);
-    }
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-folder fa-2x me-3 text-primary"></i>
+                        <div>
+                            <h3 id="folderCount">0</h3>
+                            <p class="mb-0">মোট ফোল্ডার</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-file-code fa-2x me-3 text-info"></i>
+                        <div>
+                            <h3 id="fileCount">0</h3>
+                            <p class="mb-0">মোট ফাইল</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-link fa-2x me-3 text-success"></i>
+                        <div>
+                            <h3 id="linkCount">0</h3>
+                            <p class="mb-0">মোট লিংক</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    function renderList(items, currentPath) {
-      const list = document.getElementById("file-list");
-      list.innerHTML = "";
+        <!-- Search Box -->
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-control" id="searchInput" placeholder="ফোল্ডার বা ফাইল খুঁজুন...">
+        </div>
 
-      // Go back link if inside folder
-      if (currentPath) {
-        const parts = currentPath.split("/").filter(Boolean);
-        const upPath = parts.slice(0, -1).join("/");
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="?path=${upPath}">⬅️ Back</a>`;
-        list.appendChild(li);
-      }
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item active"><i class="fas fa-home me-1"></i> রুট ডিরেক্টরি</li>
+            </ol>
+        </nav>
 
-      items.forEach(item => {
-        const li = document.createElement("li");
-        if (item.type === "dir") {
-          li.innerHTML = `📁 <a href="?path=${item.path}">${item.name}/</a>`;
-        } else {
-          li.innerHTML = `📄 <a href="https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${item.path}" target="_blank">${item.name}</a>`;
+        <!-- Loading Indicator -->
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">লোড হচ্ছে...</span>
+            </div>
+            <p class="mt-2">ফাইল স্ট্রাকচার লোড হচ্ছে...</p>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" id="noResults">
+            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+            <h4>কোন ফলাফল পাওয়া যায়নি</h4>
+            <p>অনুগ্রহ করে অন্য কিওয়ার্ড দিয়ে অনুসন্ধান করুন</p>
+        </div>
+
+        <!-- File Structure -->
+        <div class="row" id="fileStructure">
+            <!-- Files and folders will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>URL Hosting Hub</h5>
+                    <p>এক জায়গায় সব URL গুলো এক্সেস করার সহজ উপায়</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>যোগাযোগ</h5>
+                    <p><i class="fas fa-envelope me-2"></i> info@urlhostinghub.com</p>
+                    <div class="social-links mt-3">
+                        <a href="#" class="text-white me-3"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 URL Hosting Hub. সর্বস্বত্ব সংরক্ষিত।</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading indicator
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            // Simulate loading file structure
+            setTimeout(() => {
+                loadFileStructure();
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }, 1000);
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterFiles(searchTerm);
+            });
+        });
+        
+        function loadFileStructure() {
+            const fileStructureContainer = document.getElementById('fileStructure');
+            fileStructureContainer.innerHTML = '';
+            
+            // Generate folder structure based on your description
+            const folderCount = 10; // Number of case folders
+            const filesPerFolder = 100; // Number of set files per folder
+            
+            let totalFiles = 0;
+            let totalLinks = 0;
+            
+            // Create folders
+            for (let i = 1; i <= folderCount; i++) {
+                const folderDiv = document.createElement('div');
+                folderDiv.className = 'col-md-4 mb-4 folder-item';
+                folderDiv.dataset.name = `case${i}`;
+                
+                folderDiv.innerHTML = `
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span>case${i}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">এই ফোল্ডারে ${filesPerFolder}টি সেট ফাইল রয়েছে। প্রতিটি সেটে 3-4টি URL রয়েছে।</p>
+                            <button class="btn btn-primary view-folder-btn" data-folder="case${i}">
+                                <i class="fas fa-folder-open me-1"></i> ফোল্ডার দেখুন
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                fileStructureContainer.appendChild(folderDiv);
+                totalFiles += filesPerFolder;
+                totalLinks += filesPerFolder * 3.5; // Average 3.5 links per file
+            }
+            
+            // Update statistics
+            document.getElementById('folderCount').textContent = folderCount;
+            document.getElementById('fileCount').textContent = totalFiles;
+            document.getElementById('linkCount').textContent = Math.round(totalLinks);
+            
+            // Add event listeners to folder buttons
+            document.querySelectorAll('.view-folder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const folderName = this.dataset.folder;
+                    viewFolder(folderName);
+                });
+            });
         }
-        list.appendChild(li);
-      });
-    }
-
-    // Handle ?path= query for navigation
-    const urlParams = new URLSearchParams(window.location.search);
-    const path = urlParams.get("path") || "";
-    fetchRepoContents(path);
-  </script>
+        
+        function viewFolder(folderName) {
+            const fileStructureContainer = document.getElementById('fileStructure');
+            fileStructureContainer.innerHTML = '';
+            
+            // Update breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = `
+                <li class="breadcrumb-item"><a href="#" onclick="loadFileStructure(); return false;"><i class="fas fa-home me-1"></i> রুট ডিরেক্টরি</a></li>
+                <li class="breadcrumb-item active">${folderName}</li>
+            `;
+            
+            // Show loading indicator
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            // Simulate loading files
+            setTimeout(() => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                
+                // Generate files for the folder
+                const filesPerFolder = 100;
+                
+                for (let i = 1; i <= filesPerFolder; i++) {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'col-md-3 mb-3 file-item';
+                    fileDiv.dataset.name = `set-${i}.html`;
+                    
+                    fileDiv.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">
+                                    <i class="fas fa-file-code file-icon"></i>
+                                    set-${i}.html
+                                </h5>
+                                <p class="card-text">এই সেটে 3-4টি URL রয়েছে।</p>
+                                <div class="mt-auto">
+                                    <a href="./${folderName}/set-${i}.html" class="btn btn-sm btn-outline-primary me-2" target="_blank">
+                                        <i class="fas fa-external-link-alt me-1"></i> দেখুন
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-info copy-link-btn" data-link="./${folderName}/set-${i}.html">
+                                        <i class="fas fa-copy me-1"></i> লিংক কপি
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    fileStructureContainer.appendChild(fileDiv);
+                }
+                
+                // Add event listeners to copy link buttons
+                document.querySelectorAll('.copy-link-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const link = this.dataset.link;
+                        copyToClipboard(link);
+                        
+                        // Show feedback
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check me-1"></i> কপি হয়েছে!';
+                        this.classList.remove('btn-outline-info');
+                        this.classList.add('btn-success');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-outline-info');
+                        }, 2000);
+                    });
+                });
+            }, 500);
+        }
+        
+        function filterFiles(searchTerm) {
+            const folderItems = document.querySelectorAll('.folder-item');
+            const fileItems = document.querySelectorAll('.file-item');
+            const noResults = document.getElementById('noResults');
+            let hasResults = false;
+            
+            // Filter folders
+            folderItems.forEach(item => {
+                const name = item.dataset.name.toLowerCase();
+                if (name.includes(searchTerm) || searchTerm === '') {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Filter files
+            fileItems.forEach(item => {
+                const name = item.dataset.name.toLowerCase();
+                if (name.includes(searchTerm) || searchTerm === '') {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            if (hasResults) {
+                noResults.style.display = 'none';
+            } else {
+                noResults.style.display = 'block';
+            }
+        }
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = window.location.origin + '/' + text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+    </script>
 </body>
 </html>
